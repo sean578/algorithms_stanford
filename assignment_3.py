@@ -1,3 +1,6 @@
+from random import randrange
+
+
 def quicksort(array, comparisons, pivot_index):
     """ Sort data, low to high using quicksort method """
 
@@ -11,14 +14,16 @@ def quicksort(array, comparisons, pivot_index):
 
     # recurse left of pivot
     comparisons += len(left_bucket) - 1
+    pivot_left = random_pivot(left_bucket)
     ordered_array_left, comparisons = quicksort(left_bucket,
                                         comparisons,
-                                        pivot_index)
+                                        pivot_left)
     # recurse right of pivot
     comparisons += len(right_bucket) - 1
+    pivot_right = random_pivot(right_bucket)
     ordered_array_right, comparisons = quicksort(right_bucket,
                                          comparisons,
-                                         pivot_index)
+                                         pivot_right)
 
     # concatenate
     array = ordered_array_left + [pivot] + ordered_array_right
@@ -26,6 +31,13 @@ def quicksort(array, comparisons, pivot_index):
     # return the sorted array & the number of comparisons made
     # print('comparison in quicksort', comparisons)
     return array, comparisons
+
+
+def random_pivot(array):
+    if len(array) > 0:
+        return randrange(len(array))
+    else:
+        return 0
 
 
 def swap_pivot_into_first_index(array, pivot, pivot_index):
@@ -65,12 +77,12 @@ if __name__ == '__main__':
     for line in open(filepath).readlines():
         data.append(int(line.strip('\n')))
 
-    to_show = 5
-    pivot_index = -1
+    pivot_index_initial = randrange(len(data))
 
     comparisons = 0
-    array, comparisons = quicksort(data, comparisons, pivot_index)
+    array, comparisons = quicksort(data, comparisons, pivot_index_initial)
 
+    to_show = 5
     print('array start: {}\narray finish: {}\n'.format(array[:to_show],
                                                        array[-to_show:]))
     print('comparisons in main', comparisons)
