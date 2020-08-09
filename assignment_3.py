@@ -1,22 +1,30 @@
-def quicksort(array, pivot_index):
+def quicksort(array, comparisons):
     """ Sort data, low to high using quicksort method """
-    if len(array) <= 1:
-        return array
 
-    pivot = array[pivot_index]
+    if len(array) <= 1:
+        return array, comparisons
+
+    pivot = array[0]
     array, new_pivot_index = partition(array, 0)
 
-    array_left = quicksort(array[:new_pivot_index], 0)
-    array_right = quicksort(array[new_pivot_index+1:], 0)
+    # recurse left of pivot
+    comparisons += len(array[:new_pivot_index]) - 1
+    array_left, comparisons = quicksort(array[:new_pivot_index],
+                                        comparisons)
+    # recurse right of pivot
+    comparisons += len(array[new_pivot_index+1:]) - 1
+    array_right, comparisons = quicksort(array[new_pivot_index+1:],
+                                             comparisons)
 
     # concatenate
     array = array_left + [pivot] + array_right
 
     # return the sorted array & the number of comparisons made
-    return array
+    # print('comparison in quicksort', comparisons)
+    return array, comparisons
 
 
-def partition(array, pivot_index=0):
+def partition(array, pivot_index):
     """ perform partition around pivot """
 
     # choose the pivot
@@ -33,7 +41,7 @@ def partition(array, pivot_index=0):
             i += 1
 
     # swap pivot into correct position
-    array[pivot_index] = array[i-1]
+    array[0] = array[i-1]
     array[i-1] = pivot
 
     # return the ordered array and the pivot index
@@ -46,5 +54,11 @@ if __name__ == '__main__':
     for line in open(filepath).readlines():
         data.append(int(line.strip('\n')))
 
-    array = quicksort(data, 0)
-    print('array', array)
+    to_show = 5
+
+    comparisons = 0
+    array, comparisons = quicksort(data, comparisons)
+
+    print('array start: {}\narray finish: {}\n'.format(array[:to_show],
+                                                       array[-to_show:]))
+    print('comparisons in main', comparisons)
