@@ -14,13 +14,13 @@ def quicksort(array, comparisons, pivot_index):
 
     # recurse left of pivot
     comparisons += len(left_bucket) - 1
-    pivot_left = random_pivot(left_bucket)
+    pivot_left = median_of_three_pivot(left_bucket)
     ordered_array_left, comparisons = quicksort(left_bucket,
                                         comparisons,
                                         pivot_left)
     # recurse right of pivot
     comparisons += len(right_bucket) - 1
-    pivot_right = random_pivot(right_bucket)
+    pivot_right = median_of_three_pivot(right_bucket)
     ordered_array_right, comparisons = quicksort(right_bucket,
                                          comparisons,
                                          pivot_right)
@@ -38,6 +38,27 @@ def random_pivot(array):
         return randrange(len(array))
     else:
         return 0
+
+
+def median_of_three_pivot(array):
+    if len(array) < 3:
+        return 0
+    else:
+        l, m, r = [array[0], array[len(array)//2], array[-1]]  # l, m, r
+        if l < m:
+            if l > r:
+                return 0
+            elif r > m:
+                return len(array)//2
+            else:
+                return -1
+        else:
+            if m > r:
+                return len(array)//2
+            elif r < l:
+                return -1
+            else:
+                return 0
 
 
 def swap_pivot_into_first_index(array, pivot, pivot_index):
@@ -69,6 +90,7 @@ def partition(array):
 
     # return two arrays, one each side of pivot
     return array[:i-1], array[i:]
+
 
 
 if __name__ == '__main__':
