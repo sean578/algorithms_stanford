@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 
 def load_graph_and_reversed(file_handle):
@@ -12,6 +12,22 @@ def load_graph_and_reversed(file_handle):
 
 
 def load_test_graph():
+    graph = defaultdict(list)
+
+    graph[1].extend([4])
+    graph[2].extend([8])
+    graph[3].extend([6])
+    graph[4].extend([7])
+    graph[5].extend([2])
+    graph[6].extend([9])
+    graph[7].extend([1])
+    graph[8].extend([5, 6])
+    graph[9].extend([7, 3])
+
+    return graph
+
+
+def load_test_graph_reversed():
     graph = defaultdict(list)
 
     graph[1].extend([7])
@@ -52,31 +68,61 @@ def dfs_iterative(graph, vertex, seen):
     return seen, f
 
 
+def dfs_iterative_forward(graph, vertex, seen, groups):
+
+    stack = []
+    stack.append(vertex)
+
+    while stack:
+        print('stack ===================================', stack)
+        v = stack.pop()
+        print('popped', v)
+        # attach to group given by initial vertex
+        groups[v] = vertex
+        if seen[v] == 0:
+            seen[v] = 1
+            for n in graph[v]:
+                if seen[n] == 0:
+                    stack.append(n)
+
+    return seen, groups
+
+
 if __name__ == '__main__':
     # file_handle = open('data/course_2_assignment_1.txt')
     # graph, graph_r = load_graph_and_reversed(file_handle)
 
-    graph_r = load_test_graph()
+    graph = load_test_graph()
+    graph_r = load_test_graph_reversed()
     # print_graph('forwards', graph)
     print_graph('reverse', graph_r)
 
     num_verticies = 9  # 875715
-    seen = [0] * (num_verticies + 1)
 
-    all_finish_number = []
+    print('Reverse pass of graph')
+    seen = [0] * (num_verticies + 1)
+    finish_number = []
     for v in range(9, 0, -1):
         if seen[v] == 0:
             print('Starting dfs at vertex', v)
             seen, f = dfs_iterative(graph_r, v, seen)
-            all_finish_number += f
-    print('finish number', all_finish_number)
+            finish_number += f
+    print('finish number', finish_number)
 
-    # if len(finish_number) > len(set(finish_number)):
-    #     raise ValueError('Finish numbers not unique')
+    if len(finish_number) > len(set(finish_number)):
+        raise ValueError('Finish numbers not unique')
 
-    # find 'finishing times, t' - when recursion has to back up f(vertex) = t (then increment t)
-    # t=0,
+    print('Forward pass of graph')
+    seen = [0] * (num_verticies + 1)
+    groups = [0] * (num_verticies + 1)
+    for i in range(1, len(finish_number)+1):
+        v = finish_number.index(i) + 1
+        if seen[v] == 0:
+            print('Starting dfs at vertex', v)
+            seen, groups = dfs_iterative_forward(graph, v, seen, groups)
 
-    # run DFS on graph
-    # outer loop over all nodes (run if haven't seen - keep track), do from vertex with t = n to 1
-    # s=None (current source vertex - leader) - put into a set
+    print('group allocations', groups[1:])
+    print('groups', set(groups[1:]))
+
+    counter = Counter(groups[1:])
+    print(counter.most_common(5))
