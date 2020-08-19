@@ -55,7 +55,7 @@ def count_split_inversions(b, c):
 if __name__ == '__main__':
 
     a = []
-    for line in open('./data/assignment_2.txt').readlines():
+    for line in open('data/course_1_assignment_2.txt').readlines():
         a.append(int(line.strip()))
 
     print(count_inversions_and_sort(a)[0])

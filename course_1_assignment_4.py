@@ -94,7 +94,7 @@ def full_contract(graph, seed, new_vertex_name):
 
 
 if __name__ == '__main__':
-    file = open('data/assignment_4.txt')
+    file = open('data/course_1_assignment_4.txt')
     graph_orig = get_graph(file)
 
     # graph_orig = get_test_graph_2()

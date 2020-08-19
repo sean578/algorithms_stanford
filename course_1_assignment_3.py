@@ -94,7 +94,7 @@ def partition(array):
 
 
 if __name__ == '__main__':
-    filepath = './data/assignment_3.txt'
+    filepath = 'data/course_1_assignment_3.txt'
     data = []
     for line in open(filepath).readlines():
         data.append(int(line.strip('\n')))
