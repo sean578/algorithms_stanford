@@ -1,4 +1,4 @@
-from collections import defaultdict, Counter
+from collections import defaultdict, Counter, deque
 
 
 def load_graph_and_reversed(file_handle):
@@ -50,17 +50,17 @@ def print_graph(name, graph):
 
 
 def dfs_iterative(graph, vertex, seen):
-    stack = []
-    f = []
+    stack = deque()
     stack.append(vertex)
+    f = deque()
 
     while stack:
-        print('stack ===================================', stack)
         v = stack.pop()
-        print('popped', v)
         if seen[v] == 0:
+            print('visiting', v)
             seen[v] = 1
-            f = [v] + f
+            print('appending', v)
+            f.append(v)
             for n in graph[v]:
                 if seen[n] == 0:
                     stack.append(n)
@@ -74,9 +74,7 @@ def dfs_iterative_forward(graph, vertex, seen, groups):
     stack.append(vertex)
 
     while stack:
-        print('stack ===================================', stack)
         v = stack.pop()
-        print('popped', v)
         # attach to group given by initial vertex
         groups[v] = vertex
         if seen[v] == 0:
@@ -89,40 +87,38 @@ def dfs_iterative_forward(graph, vertex, seen, groups):
 
 
 if __name__ == '__main__':
-    # file_handle = open('data/course_2_assignment_1.txt')
-    # graph, graph_r = load_graph_and_reversed(file_handle)
+    print('---------------------Loading graph------------------------')
+    file_handle = open('data/test_5.txt')
+    graph, graph_r = load_graph_and_reversed(file_handle)
 
-    graph = load_test_graph()
-    graph_r = load_test_graph_reversed()
-    # print_graph('forwards', graph)
+    # graph = load_test_graph()
+    # graph_r = load_test_graph_reversed()
+
+    num_verticies = 12
+    print_graph('forward', graph)
     print_graph('reverse', graph_r)
 
-    num_verticies = 9  # 875715
-
-    print('Reverse pass of graph')
+    print('--------------------Reverse pass of graph--------------------')
     seen = [0] * (num_verticies + 1)
-    finish_number = []
-    for v in range(9, 0, -1):
+    order = deque()
+    for v in range(num_verticies, 0, -1):
+        print('Starting from node', v)
         if seen[v] == 0:
-            print('Starting dfs at vertex', v)
             seen, f = dfs_iterative(graph_r, v, seen)
-            finish_number += f
-    print('finish number', finish_number)
+            order.appendleft(f)
 
-    if len(finish_number) > len(set(finish_number)):
-        raise ValueError('Finish numbers not unique')
-
-    print('Forward pass of graph')
+    print('--------------------Forward pass of graph----------------------')
     seen = [0] * (num_verticies + 1)
     groups = [0] * (num_verticies + 1)
-    for i in range(1, len(finish_number)+1):
-        v = finish_number.index(i) + 1
-        if seen[v] == 0:
-            print('Starting dfs at vertex', v)
-            seen, groups = dfs_iterative_forward(graph, v, seen, groups)
+    # for i in range(1, len(finish_number)+1):
+    for g in order:
+        for v in g:
+            print(v)
+            # v = finish_number.index(i) + 1
+            if seen[v] == 0:
+                seen, groups = dfs_iterative_forward(graph, v, seen, groups)
 
-    print('group allocations', groups[1:])
-    print('groups', set(groups[1:]))
-
+    print('--------------------Get group sizes----------------------')
+    print('Counting up group sizes')
     counter = Counter(groups[1:])
     print(counter.most_common(5))
