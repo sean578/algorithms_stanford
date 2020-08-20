@@ -57,9 +57,7 @@ def dfs_iterative(graph, vertex, seen):
     while stack:
         v = stack.pop()
         if seen[v] == 0:
-            print('visiting', v)
             seen[v] = 1
-            print('appending', v)
             f.append(v)
             for n in graph[v]:
                 if seen[n] == 0:
@@ -88,21 +86,14 @@ def dfs_iterative_forward(graph, vertex, seen, groups):
 
 if __name__ == '__main__':
     print('---------------------Loading graph------------------------')
-    file_handle = open('data/test_5.txt')
+    file_handle = open('data/course_2_assignment_1.txt')
     graph, graph_r = load_graph_and_reversed(file_handle)
-
-    # graph = load_test_graph()
-    # graph_r = load_test_graph_reversed()
-
-    num_verticies = 12
-    print_graph('forward', graph)
-    print_graph('reverse', graph_r)
+    num_verticies = 875714
 
     print('--------------------Reverse pass of graph--------------------')
     seen = [0] * (num_verticies + 1)
     order = deque()
     for v in range(num_verticies, 0, -1):
-        print('Starting from node', v)
         if seen[v] == 0:
             seen, f = dfs_iterative(graph_r, v, seen)
             order.appendleft(f)
@@ -110,15 +101,12 @@ if __name__ == '__main__':
     print('--------------------Forward pass of graph----------------------')
     seen = [0] * (num_verticies + 1)
     groups = [0] * (num_verticies + 1)
-    # for i in range(1, len(finish_number)+1):
     for g in order:
         for v in g:
             print(v)
-            # v = finish_number.index(i) + 1
             if seen[v] == 0:
                 seen, groups = dfs_iterative_forward(graph, v, seen, groups)
 
     print('--------------------Get group sizes----------------------')
-    print('Counting up group sizes')
     counter = Counter(groups[1:])
     print(counter.most_common(5))
